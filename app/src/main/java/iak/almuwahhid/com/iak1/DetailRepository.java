@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import iak.almuwahhid.com.iak1.Controller.EventHandler;
 import iak.almuwahhid.com.iak1.Helper.DatabaseHandler;
+import iak.almuwahhid.com.iak1.Services.InsertService;
 
 public class DetailRepository extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class DetailRepository extends AppCompatActivity {
     EventHandler handler;
     DatabaseHandler dbHandler;
     SharedPreferences sp;
+    int check_saved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,6 @@ public class DetailRepository extends AppCompatActivity {
         ambilIntent();
         handler = new EventHandler();
         dbHandler = new DatabaseHandler(this);
-        sp = getApplicationContext().getSharedPreferences("user", 0);
 
         name_repo = (TextView) findViewById(R.id.detail_repo_namerepo);
         name_owner = (TextView) findViewById(R.id.detail_repo_owner);
@@ -68,6 +70,7 @@ public class DetailRepository extends AppCompatActivity {
         c = intent.getStringExtra("desc");
         d = intent.getStringExtra("url");
         e = intent.getStringExtra("photo");
+        check_saved = intent.getIntExtra("saved", 0);
     }
 
     @Override
@@ -85,11 +88,29 @@ public class DetailRepository extends AppCompatActivity {
             case R.id.browser_toolbar :
                 openWebPage(d);
                 break;
+            case R.id.service_toolbar :
+                Bundle bundle = new Bundle();
+                bundle.putString("a", a);
+                bundle.putString("b", b);
+                bundle.putString("c", c);
+                bundle.putString("d", d);
+                bundle.putString("e", e);
+                bundle.putString("f", sp.getString("username", null));
+                Intent intent = new Intent(DetailRepository.this, InsertService.class);
+                intent.putExtras(bundle);
+
+                Log.d("freak", "onOptionsItemSelected: bener");
+                startService(intent);
+                break;
             case R.id.add_toolbar:
-                if(dbHandler.addData(a,b,c,d,e,sp.getString("username", null))){
-                    Toast.makeText(this, "Berhasil tambah data", Toast.LENGTH_SHORT).show();
+                if(check_saved == 1){
+                    Toast.makeText(this, "Sudah Disimpan", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(this, "Bermasalah", Toast.LENGTH_SHORT).show();
+                    if(dbHandler.addData(a,b,c,d,e,sp.getString("username", null))){
+                        Toast.makeText(this, "Berhasil tambah data", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, "Bermasalah", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case android.R.id.home :

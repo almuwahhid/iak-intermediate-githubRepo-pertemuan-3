@@ -3,6 +3,8 @@
     package="iak.almuwahhid.com.iak1">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.example.udacity.droidtermsexample.TERMS_READ"/>
+
 
     <application
         android:allowBackup="true"
@@ -11,17 +13,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".Adapter.GithubAdapter" />
         <activity android:name=".DetailRepository" />
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="iak.almuwahhid.com.iak1.Helper.TaskContentProvider"
+            android:authorities="com.iak.almuwahhid"
+            android:exported="true"/>
+
+        <activity android:name=".SavedRepo" />
+        <activity android:name=".Adapter.SavedRepoAdapter"></activity>
+        <service android:name=".Services.InsertService" android:exported="false"/>
+
     </application>
 
 </manifest>

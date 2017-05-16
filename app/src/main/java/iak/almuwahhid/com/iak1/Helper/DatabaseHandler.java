@@ -45,7 +45,8 @@ public class DatabaseHandler {
         e = new ArrayList();
         try {
             database = db.getWritableDatabase();
-            String query = "SELECT * FROM github WHERE username = "+username;
+//            String query = "SELECT * FROM github WHERE username = "+username;
+            String query = "SELECT * FROM github";
             csr = database.rawQuery(query, null);
             while (csr.moveToNext()){
                 Github github = new Github();
@@ -66,6 +67,7 @@ public class DatabaseHandler {
         try {
             database = db.getWritableDatabase();
             String query = "INSERT INTO github ('name_repo', 'name_owner', 'desc', 'url', 'photo', 'username') VALUES ('"+a+"', '"+b+"', '"+c+"', '"+d+"', '"+e+"', '"+username+"')";
+//            Log.e("addData", "addData: "+query );
             database.execSQL(query);
             return true;
         }catch (Exception x){

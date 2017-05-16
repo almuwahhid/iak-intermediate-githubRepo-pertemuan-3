@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }else if(item.getItemId()==R.id.logout_toolbar){
             evt.setSESSIONNull(sp);
             startActivity(new Intent(this, Login.class));
+        }else if(item.getItemId()==R.id.saved_toolbar){
+            startActivity(new Intent(this, SavedRepo.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -121,9 +123,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     return;
                 }
                 mLoadingIndicator.setVisibility(View.VISIBLE);
-                /*forceLoad();*/ // fungsi buat apa ?
-
-                // tambahan fungsinya
                 if (mGithubJson != null) {
                     deliverResult(mGithubJson);
                 } else {
@@ -149,20 +148,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void deliverResult(String data) {
-                try {
-                    all_data = evt.setToArray(all_data, data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                adapter = new GithubAdapter(all_data, getBaseContext());
-                super.deliverResult(data);
+                mGithubJson = data;
+                super.deliverResult(mGithubJson);
             }
         };
     }
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        if (null == data) {
+            showErrorMessage();
+        } else {
+            showJsonDataView();
+            try {
+                all_data = evt.setToArray(all_data, data);
+                adapter = new GithubAdapter(all_data, getBaseContext());
+                rv.setAdapter(adapter);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -217,11 +224,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
     private void showJsonDataView() {
-        // First, make sure the error is invisible
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        // Then, make sure the JSON data is visible
-//        mSearchResultsTextView.setVisibility(View.VISIBLE);
     }
+
     private void makeGithubSearchQuery(Boolean b) {
         String githubQuery ="";
         if(!b){
@@ -231,9 +236,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery);
         mUrlDisplayTextView.setText(githubSearchUrl.toString());
-        new GithubQueryTask().execute(githubSearchUrl);
+//        new GithubQueryTask().execute(githubSearchUrl);
 
-/*        Bundle queryBundle = new Bundle();
+        Bundle queryBundle = new Bundle();
         queryBundle.putString("query", githubSearchUrl.toString());
 
         LoaderManager loaderManager = getSupportLoaderManager();
@@ -242,6 +247,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             loaderManager.initLoader(22, queryBundle, this);
         } else {
             loaderManager.restartLoader(22, queryBundle, this);
-        }*/
+        }
     }
 }

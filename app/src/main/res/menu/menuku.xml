@@ -9,7 +9,10 @@
         android:title="" />
     <item
         android:id="@+id/logout_toolbar"
+        android:orderInCategory="3"
+        android:title="Logout" />
+    <item
+        android:id="@+id/saved_toolbar"
         android:orderInCategory="2"
-        app:showAsAction="always"
-        android:title="keluar" />
+        android:title="Saved Repo" />
 </menu>
